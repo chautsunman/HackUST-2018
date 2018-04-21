@@ -75,6 +75,7 @@ class WhiteBoard extends React.Component {
 			this.lastX = e.clientX - this.refs.canvas.offsetLeft;
 			this.lastY = e.clientY - this.refs.canvas.offsetTop;
 			this.drawing = true;
+			this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
 		} else if (res == 'up' || res == "out") {
 			this.drawing = false;
 			this.board.push(this.points.slice());
