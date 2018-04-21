@@ -39,7 +39,7 @@ class Chat extends React.Component {
 	render() {
 
 		return (
-			<div>
+			<div style={{marginLeft:30,marginRight:30}}>
 				<ChatRoom />
 
 				<Paper elevation={4}>

@@ -10,6 +10,11 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import Switch from 'material-ui/Switch';
 import { FormControlLabel, FormGroup } from 'material-ui/Form';
 import Menu, { MenuItem } from 'material-ui/Menu';
+import List from 'material-ui/List';
+import Divider from 'material-ui/Divider';
+import Chat from './Chat';
+// import { mailFolderListItems, otherMailFolderListItems } from './tileData';
+import SwipeableDrawer from 'material-ui/SwipeableDrawer';
 
 const styles = {
   root: {
@@ -22,12 +27,25 @@ const styles = {
     marginLeft: -12,
     marginRight: 20,
   },
+  list: {
+    width: 250,
+  },
+  fullList: {
+    width: 'auto',
+  },
 };
 
 class MenuAppBar extends React.Component {
   state = {
     auth: true,
     anchorEl: null,
+    right: false,
+  };
+
+  toggleDrawer = (side, open) => () => {
+    this.setState({
+      [side]: open,
+    });
   };
 
   handleChange = (event, checked) => {
@@ -47,13 +65,18 @@ class MenuAppBar extends React.Component {
     const { auth, anchorEl } = this.state;
     const open = Boolean(anchorEl);
 
+    const sideList = (
+      <Chat />
+    );
+
+    const fullList = (
+      <Chat />
+    );
+
     return (
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
-              <MenuIcon />
-            </IconButton>
             <Typography variant="title" color="inherit" className={classes.flex} style={{textAlign:"left"}}>
               Title
             </Typography>
@@ -86,6 +109,24 @@ class MenuAppBar extends React.Component {
                 </Menu>
               </div>
             )}
+            <IconButton onClick={this.toggleDrawer('right', true)} className={classes.menuButton} color="inherit" aria-label="Menu">
+              <MenuIcon />
+            </IconButton>
+
+            <SwipeableDrawer
+              anchor="right"
+              open={this.state.right}
+              onClose={this.toggleDrawer('right', false)}
+              onOpen={this.toggleDrawer('right', true)}
+            >
+              <div
+                tabIndex={0}
+                role="button"
+              >
+                {sideList}
+              </div>
+            </SwipeableDrawer>
+
           </Toolbar>
         </AppBar>
       </div>

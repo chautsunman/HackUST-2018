@@ -40,7 +40,7 @@ class ChatRoom extends React.Component {
 				msg.name = "You";
 
 			} else {
-				msg.name = "Michael";
+				msg.name = "Collaborator";
 			}
 
 			this.setState((prevState, props) => {
