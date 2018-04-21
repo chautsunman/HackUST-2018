@@ -1,7 +1,9 @@
+import io from 'socket.io-client';
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import Paper from 'material-ui/Paper';
+import Card from 'material-ui/Card';
 import Typography from 'material-ui/Typography';
 
 const styles = theme => ({
@@ -17,11 +19,13 @@ const styles = theme => ({
 class WhiteBoard extends React.Component {
 	constructor(props) {
 		super(props);
+		this.socket = io('http://52.163.125.99:8080/', {transports: ['websocket'], upgrade: false});
 		this.el = React.createRef();
 		this.drawing = false;
 		this.ctx = null;
-		this.width = 800;
+		this.width = 600;
 		this.height = 500;
+		this.points = [];
 	}
 
 	draw(lastX, lastY, currentX, currentY) {
@@ -35,19 +39,30 @@ class WhiteBoard extends React.Component {
 		this.ctx.stroke();
 	}
 
+	onTouch(res, e) {
+		e.preventDefault();
+		e.stopPropagation();
+		this.findxy(res, e);
+	}
+
 	findxy(res, e) {
 		if (res == 'touchstart') {
 			this.lastX = e.touches[0].clientX - this.refs.canvas.offsetLeft;
 			this.lastY = e.touches[0].clientY - this.refs.canvas.offsetTop;
 			this.drawing = true;
+			this.points.push({x: this.lastX, y: this.lastY});
 		} else if (res == 'touchmove') {
 			if (this.drawing) {
 				this.draw(this.lastX, this.lastY, e.changedTouches[0].clientX - this.refs.canvas.offsetLeft, e.changedTouches[0].clientY - this.refs.canvas.offsetTop);
 				this.lastX = e.changedTouches[0].clientX - this.refs.canvas.offsetLeft;
 				this.lastY = e.changedTouches[0].clientY - this.refs.canvas.offsetTop;
+				this.points.push({x: this.lastX, y: this.lastY});
 			}
 		} else if (res == 'touchend') {
 			this.drawing = false;
+			console.log(this.points);
+			this.socket.emit('draw', {points: this.points});
+			this.points = [];
 		} else if (res == 'down') {
 			this.lastX = e.clientX - this.refs.canvas.offsetLeft;
 			this.lastY = e.clientY - this.refs.canvas.offsetTop;
@@ -73,12 +88,20 @@ class WhiteBoard extends React.Component {
 		this.height = document.body.clientHeight;
 		console.log(this.width);
 		console.log(this.height);
+
+		this.socket.on('draw', (msg) => {
+			console.log('Received');
+			for (let i = 1; i < msg.points.length; ++i) {
+				this.draw(msg.points[i-1].x, msg.points[i-1].y, msg.points[i].x, msg.points[i].y);
+			}
+		});
+
 	}
 
 	render() {
 		return (
 			<div>
-				<Paper ref="canvasContainer" elevation={4}>
+				<Card ref="canvasContainer" elevation={4}>
 					<canvas id="board"
 						ref="canvas"
 						className="board"
@@ -88,12 +111,12 @@ class WhiteBoard extends React.Component {
 						onMouseMove={(e) => this.findxy('move', e)}
 						onMouseUp={(e) => this.findxy('up', e)}
 						onMouseOut={(e) => this.findxy('out', e)}
-						onTouchStart={(e) => this.findxy('touchstart', e)}
-						onTouchMove={(e) => this.findxy('touchmove', e)}
-						onTouchEnd={(e) => this.findxy('touchend', e)}
+						onTouchStart={(e) => this.onTouch('touchstart', e)}
+						onTouchMove={(e) => this.onTouch('touchmove', e)}
+						onTouchEnd={(e) => this.onTouch('touchend', e)}
 					>
 					</canvas>
-				</Paper>
+				</Card>
 			</div>
 		);
 	}
