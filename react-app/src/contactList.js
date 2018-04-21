@@ -60,7 +60,7 @@ class CheckboxListSecondary extends React.Component {
           </List>
         </div>
         <div>
-          <Btn />
+            <Btn />
         </div>
       </div>
     );
