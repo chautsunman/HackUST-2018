@@ -35,10 +35,6 @@ class WhiteBoard extends React.Component {
 	penColor = '#000000';
 
 	draw(lastX, lastY, currentX, currentY, penColor) {
-		console.log(lastX);
-		console.log(lastY);
-		console.log(currentX);
-		console.log(currentY);
 		this.ctx.beginPath();
 		this.ctx.moveTo(lastX, lastY);
 		this.ctx.lineTo(currentX, currentY);
@@ -54,11 +50,13 @@ class WhiteBoard extends React.Component {
 
 	findxy(res, e) {
 		if (res == 'touchstart') {
+			e.preventDefault();
 			this.lastX = e.touches[0].clientX - this.refs.canvas.offsetLeft;
 			this.lastY = e.touches[0].clientY - this.refs.canvas.offsetTop;
 			this.drawing = true;
 			this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
 		} else if (res == 'touchmove') {
+			e.preventDefault();
 			if (this.drawing) {
 				this.draw(this.lastX, this.lastY, e.changedTouches[0].clientX - this.refs.canvas.offsetLeft, e.changedTouches[0].clientY - this.refs.canvas.offsetTop, this.penColor);
 				this.lastX = e.changedTouches[0].clientX - this.refs.canvas.offsetLeft;
@@ -66,22 +64,27 @@ class WhiteBoard extends React.Component {
 				this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
 			}
 		} else if (res == 'touchend') {
+			e.preventDefault();
 			this.drawing = false;
 			this.board.push(this.points.slice());
 			console.log(this.board);
 			this.socket.emit('draw', {points: this.points, penColor: this.penColor});
 			this.points = [];
 		} else if (res == 'down') {
+			//e.preventDefault();
+		//if (res == 'down') {
 			this.lastX = e.clientX - this.refs.canvas.offsetLeft;
 			this.lastY = e.clientY - this.refs.canvas.offsetTop;
 			this.drawing = true;
 			this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
-		} else if (res == 'up' || res == "out") {
+		} else if (res == 'up') {
+			//e.preventDefault();
 			this.drawing = false;
 			this.board.push(this.points.slice());
 			this.socket.emit('draw', {points: this.points, penColor: this.penColor});
 			this.points = [];
 		} else if (res == 'move') {
+			//e.preventDefault();
 			if (this.drawing) {
 				this.draw(this.lastX, this.lastY, e.clientX - this.refs.canvas.offsetLeft, e.clientY - this.refs.canvas.offsetTop, this.penColor);
 				this.lastX = e.clientX - this.refs.canvas.offsetLeft;
@@ -118,8 +121,6 @@ class WhiteBoard extends React.Component {
 		this.ctx = this.refs.canvas.getContext('2d');
 		this.width = document.body.clientWidth;
 		this.height = document.body.clientHeight;
-		console.log(this.width);
-		console.log(this.height);
 
 		this.socket.on('draw', (msg) => {
 			if (msg.undo) {
