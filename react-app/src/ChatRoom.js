@@ -8,7 +8,7 @@ class ChatRoom extends React.Component {
 	constructor(props) {
 		super(props);
 
-    this.state = {msg: ''};
+    this.state = {msg: '', msgs: []};
 
 		this.socket = io('http://52.163.125.99:8080/', {transports: ['websocket'], upgrade: false});
 
@@ -30,14 +30,22 @@ class ChatRoom extends React.Component {
 	}
 
 	componentDidMount() {
-		this.socket.on('msg', function(msg) {
-			console.log(msg);
+		this.socket.on('chat', (msg) => {
+			this.setState((prevState, props) => {
+				prevState.msgs.push(msg);
+				return {
+					msgs: prevState.msgs
+				};
+			});
 		});
 	}
 
 	render() {
+		console.log('hi', this.state.msgs);
+
 		return (
 			<div>
+				{this.state.msgs.map((msg, i) => (<div key={i}>{msg.msg}</div>))}
 				<form noValidate autoComplete="off">
 					<TextField
             id="msg"
