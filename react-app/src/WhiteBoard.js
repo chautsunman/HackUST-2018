@@ -4,6 +4,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import Card from 'material-ui/Card';
+import Icons from './toolBar';
 import Typography from 'material-ui/Typography';
 
 const styles = theme => ({
@@ -31,7 +32,9 @@ class WhiteBoard extends React.Component {
 		//this.undo = this.undo.bind(this);
 	}
 
-	draw(lastX, lastY, currentX, currentY) {
+	penColor = '#000000';
+
+	draw(lastX, lastY, currentX, currentY, penColor) {
 		console.log(lastX);
 		console.log(lastY);
 		console.log(currentX);
@@ -39,6 +42,7 @@ class WhiteBoard extends React.Component {
 		this.ctx.beginPath();
 		this.ctx.moveTo(lastX, lastY);
 		this.ctx.lineTo(currentX, currentY);
+		this.ctx.strokeStyle = penColor;
 		this.ctx.stroke();
 	}
 
@@ -53,19 +57,19 @@ class WhiteBoard extends React.Component {
 			this.lastX = e.touches[0].clientX - this.refs.canvas.offsetLeft;
 			this.lastY = e.touches[0].clientY - this.refs.canvas.offsetTop;
 			this.drawing = true;
-			this.points.push({x: this.lastX, y: this.lastY});
+			this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
 		} else if (res == 'touchmove') {
 			if (this.drawing) {
-				this.draw(this.lastX, this.lastY, e.changedTouches[0].clientX - this.refs.canvas.offsetLeft, e.changedTouches[0].clientY - this.refs.canvas.offsetTop);
+				this.draw(this.lastX, this.lastY, e.changedTouches[0].clientX - this.refs.canvas.offsetLeft, e.changedTouches[0].clientY - this.refs.canvas.offsetTop, this.penColor);
 				this.lastX = e.changedTouches[0].clientX - this.refs.canvas.offsetLeft;
 				this.lastY = e.changedTouches[0].clientY - this.refs.canvas.offsetTop;
-				this.points.push({x: this.lastX, y: this.lastY});
+				this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
 			}
 		} else if (res == 'touchend') {
 			this.drawing = false;
 			this.board.push(this.points.slice());
 			console.log(this.board);
-			this.socket.emit('draw', {points: this.points});
+			this.socket.emit('draw', {points: this.points, penColor: this.penColor});
 			this.points = [];
 		} else if (res == 'down') {
 			this.lastX = e.clientX - this.refs.canvas.offsetLeft;
@@ -75,7 +79,7 @@ class WhiteBoard extends React.Component {
 			this.drawing = false;
 		} else if (res == 'move') {
 			if (this.drawing) {
-				this.draw(this.lastX, this.lastY, e.clientX - this.refs.canvas.offsetLeft, e.clientY - this.refs.canvas.offsetTop);
+				this.draw(this.lastX, this.lastY, e.clientX - this.refs.canvas.offsetLeft, e.clientY - this.refs.canvas.offsetTop, this.penColor);
 				this.lastX = e.clientX - this.refs.canvas.offsetLeft;
 				this.lastY = e.clientY - this.refs.canvas.offsetTop;
 			}
@@ -96,7 +100,7 @@ class WhiteBoard extends React.Component {
 			console.log('Here');
 			console.log(points);
 			for (let i = 1; i < points.length; ++i) {
-				this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+				this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y, points[i].penColor);
 			}
 		}
 
@@ -116,19 +120,19 @@ class WhiteBoard extends React.Component {
 			if (msg.undo) {
 				console.log('Undo');
 				this.board.pop();
-		
+
 				this.ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
 
 				for (let points of this.board) {
 					for (let i = 1; i < points.length; ++i) {
-						this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+						this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y, points[i].penColor);
 					}
 				}
 
 			} else {
 				console.log('Received');
 				for (let i = 1; i < msg.points.length; ++i) {
-					this.draw(msg.points[i-1].x, msg.points[i-1].y, msg.points[i].x, msg.points[i].y);
+					this.draw(msg.points[i-1].x, msg.points[i-1].y, msg.points[i].x, msg.points[i].y, msg.penColor);
 				}
 				this.board.push(msg.points);
 			}
@@ -136,9 +140,15 @@ class WhiteBoard extends React.Component {
 
 	}
 
+	changePenColor(color) {
+		this.penColor = color;
+	}
+
 	render() {
 		return (
 			<div>
+				<Icons onSelectPenColor={(color) => this.changePenColor(color)} onUndo={() => this.undo()} />
+
 				<Card ref="canvasContainer" elevation={4}>
 					<canvas id="board"
 						ref="canvas"
@@ -154,7 +164,6 @@ class WhiteBoard extends React.Component {
 						onTouchEnd={(e) => this.onTouch('touchend', e)}
 					>
 					</canvas>
-					<button onClick={() => this.undo()}>Undo</button>
 				</Card>
 			</div>
 		);
