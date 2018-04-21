@@ -16,6 +16,8 @@ class ChatRoom extends React.Component {
     this.sendMsg = this.sendMsg.bind(this);
 	}
 
+	times = {};
+
 	msgChange(event) {
     this.setState({
       msg: event.target.value
@@ -23,7 +25,9 @@ class ChatRoom extends React.Component {
 	}
 
 	sendMsg() {
-    this.socket.emit('chat', {msg: this.state.msg});
+		let time = new Date().getTime();
+    this.times[time] = true;
+    this.socket.emit('chat', {time: time ,msg: this.state.msg, name:""});
     this.setState({
       msg: ''
     });
@@ -31,6 +35,14 @@ class ChatRoom extends React.Component {
 
 	componentDidMount() {
 		this.socket.on('chat', (msg) => {
+			if (msg.time in this.times) {
+				// It's you.
+				msg.name = "You";
+
+			} else {
+				msg.name = "Michael";
+			}
+
 			this.setState((prevState, props) => {
 				prevState.msgs.push(msg);
 				return {
@@ -45,7 +57,7 @@ class ChatRoom extends React.Component {
 
 		return (
 			<div>
-				{this.state.msgs.map((msg, i) => (<div key={i}>{msg.msg}</div>))}
+				{this.state.msgs.map((msg, i) => (<div key={i}>{msg.name}: {msg.msg}</div>))}
 				<form noValidate autoComplete="off">
 					<TextField
             id="msg"
