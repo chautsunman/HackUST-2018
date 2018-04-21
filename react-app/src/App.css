@@ -26,3 +26,13 @@
   padding-top: 20px;
 }
 
+video {
+  height: 160px;
+  width: 160px;
+}
+
+#removeVideos {
+  display: flex;
+  flex-wrap: wrap;
+}
+
