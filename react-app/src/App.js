@@ -4,6 +4,7 @@ import MenuAppBar from './AppBar';
 import ConversationList from './ConversationList';
 import CheckboxListSecondary from './contactList';
 import WhiteBoard from './WhiteBoard';
+import Chat from './Chat';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import './App.css';
 
@@ -17,6 +18,7 @@ class App extends Component {
           <Route exact path="/" component={ConversationList} />
           <Route path="/contact-list" component={CheckboxListSecondary} />
           <Route path="/whiteboard" component={WhiteBoard} />
+		  <Route path="/chat" component={Chat} />
         </div>
       </Router>
     );
