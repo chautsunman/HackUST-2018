@@ -26,19 +26,11 @@ class App extends Component {
 	console.log(next);
   }
 
-  componentDidMount() {
-	console.log(this.history);
-	this.history.listen((location, action) => {
-		console.log('here');
-		console.log(location);
-	});
-  }
-
   render() {
     return (
       <Router>
         <div className="App">
-          <MenuAppBar openChat={this.openChat} />
+          <MenuAppBar />
           <div className="conversation">
             <Route exact path="/" component={ConversationList} />
           </div>

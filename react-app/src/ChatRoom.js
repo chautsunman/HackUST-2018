@@ -57,7 +57,9 @@ class ChatRoom extends React.Component {
 
 		return (
 			<div>
-				{this.state.msgs.map((msg, i) => (<div key={i}>{msg.name}: {msg.msg}</div>))}
+				<p style={{textAlign:"center", fontWeight:"800"}}>Chat Room</p>
+				<br/>
+				{this.state.msgs.map((msg, i) => (<div key={i}><strong>{msg.name}</strong>: {msg.msg}</div>))}
 				<form noValidate autoComplete="off">
 					<TextField
             id="msg"
@@ -65,6 +67,7 @@ class ChatRoom extends React.Component {
 						onChange={this.msgChange}
 						label="message"
 						margin="normal"
+						style={{marginRight:10}}
 					/>
 					<Button variant="raised" onClick={this.sendMsg}>
 						Send

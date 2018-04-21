@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
 import ChatRoom from './ChatRoom';
-import Paper from 'material-ui/Paper';
+import GridList, { GridListTile } from 'material-ui/GridList';
 import Typography from 'material-ui/Typography';
 
 import SimpleWebRTC from 'simplewebrtc';
@@ -40,12 +40,11 @@ class Chat extends React.Component {
 
 		return (
 			<div style={{marginLeft:30,marginRight:30}}>
+
 				<ChatRoom />
 
-				<Paper elevation={4}>
-					<video id="localVideo"></video>
-					<div id="remoteVideos"></div>
-				</Paper>
+				<div id="remoteVideos"></div>
+				<video id="localVideo"></video>
 			</div>
 		);
 	}
