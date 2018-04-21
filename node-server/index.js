@@ -13,8 +13,8 @@ io.on('connection', function(socket) {
     io.emit('chat', msg);
   });
 
-  socket.on('draw', function() {
-    socket.broadcast.emit('draw');
+  socket.on('draw', function(drawEvent) {
+    socket.broadcast.emit('draw', drawEvent);
   });
 });
 
