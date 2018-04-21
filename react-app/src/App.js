@@ -9,16 +9,11 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import './App.css';
 
 class App extends Component {
-  openChat() {
-    console.log('open');
-    
-  }
-
   render() {
     return (
       <Router>
         <div className="App">
-          <MenuAppBar openChat={this.openChat} />
+          <MenuAppBar />
           <div className="conversation">
             <Route exact path="/" component={ConversationList} />
           </div>

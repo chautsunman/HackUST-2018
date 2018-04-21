@@ -40,6 +40,7 @@ class Chat extends React.Component {
 
 		return (
 			<div style={{marginLeft:30,marginRight:30}}>
+				
 				<ChatRoom />
 
 				<Paper elevation={4}>
