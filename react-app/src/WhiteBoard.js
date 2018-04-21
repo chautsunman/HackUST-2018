@@ -24,11 +24,17 @@ class WhiteBoard extends React.Component {
 		this.el = React.createRef();
 		this.drawing = false;
 		this.ctx = null;
-		this.width = 600;
+		this.width = 800;
 		this.height = 500;
 		this.points = [];
 		this.board = [];
 		this.brushSize = 1;
+
+		this.cardStyle = {
+			marginLeft: 16,
+			marginRight: 16,
+			marginTop: 16
+		}
 
 		//this.undo = this.undo.bind(this);
 	}
@@ -165,7 +171,7 @@ class WhiteBoard extends React.Component {
 			<div>
 				<Icons onSelectPenColor={(color) => this.changePenColor(color)} onUndo={() => this.undo()} onSelectBrushSize={(size) => this.changeBrushSize(size)}/>
 
-				<Card ref="canvasContainer" elevation={4}>
+				<Card ref="canvasContainer" elevation={4} style={this.cardStyle}>
 					<canvas id="board"
 						ref="canvas"
 						className="board"
