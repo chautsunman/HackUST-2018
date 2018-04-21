@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import createHistory from 'history/createBrowserHistory';
 import MenuAppBar from './AppBar';
 import ConversationList from './ConversationList';
 import CheckboxListSecondary from './contactList';
@@ -9,9 +10,28 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import './App.css';
 
 class App extends Component {
+
+  constructor() {
+	  super();
+	  this.history = createHistory();
+  }
+
   openChat() {
     console.log('open');
-    
+  }
+
+  pageHandler(prev, next) {
+	console.log('Page Handler called');
+	console.log(prev);
+	console.log(next);
+  }
+
+  componentDidMount() {
+	console.log(this.history);
+	this.history.listen((location, action) => {
+		console.log('here');
+		console.log(location);
+	});
   }
 
   render() {
@@ -22,9 +42,8 @@ class App extends Component {
           <div className="conversation">
             <Route exact path="/" component={ConversationList} />
           </div>
-          <Route path="/contact-list" component={CheckboxListSecondary} />
-          <Route path="/whiteboard" component={WhiteBoard} />
-          <Route path="/chat" component={Chat} />
+		  <Route path="/contact-list" component={CheckboxListSecondary} />
+		  <Route path="/whiteboard" component={WhiteBoard} />
         </div>
       </Router>
     );

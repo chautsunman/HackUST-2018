@@ -13,6 +13,9 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import Chat from './Chat';
+
+import { withRouter } from 'react-router';
+
 // import { mailFolderListItems, otherMailFolderListItems } from './tileData';
 import SwipeableDrawer from 'material-ui/SwipeableDrawer';
 
@@ -61,9 +64,27 @@ class MenuAppBar extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, location, history } = this.props;
     const { auth, anchorEl } = this.state;
     const open = Boolean(anchorEl);
+
+	const page = history.location.pathname.slice(1);
+	let title = '';
+	
+	switch(page) {
+		case 'whiteboard':
+			title = 'Whiteboard';
+			break;
+		case 'contact-list':
+			title = 'Contact List';
+			break;
+		case '':
+			title = 'Conversation List';
+			break;
+		default:
+			title = 'Magic Board';
+			break;
+	}
 
     const sideList = (
       <Chat />
@@ -78,7 +99,7 @@ class MenuAppBar extends React.Component {
         <AppBar position="static">
           <Toolbar>
             <Typography variant="title" color="inherit" className={classes.flex} style={{textAlign:"left"}}>
-              Title
+			  { title }
             </Typography>
             {auth && (
               <div>
@@ -138,5 +159,5 @@ MenuAppBar.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(MenuAppBar);
+export default withRouter(withStyles(styles)(MenuAppBar));
 
