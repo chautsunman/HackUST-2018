@@ -19,6 +19,21 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
+	<style type="text/css">
+		body {
+			position: fixed;
+			width: 100%;
+		},
+		body.noScroll {
+			overflow: hidden;
+		}
+	</style>
+	<script>
+		document.body.addEventListener("touchmove", function(event) {
+			event.preventDefault();
+			event.stopPropagation();
+		}, false);
+	</script>
     <title>React App</title>
   </head>
   <body>
