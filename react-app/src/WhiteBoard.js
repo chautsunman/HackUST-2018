@@ -28,16 +28,19 @@ class WhiteBoard extends React.Component {
 		this.height = 500;
 		this.points = [];
 		this.board = [];
+		this.brushSize = 1;
 
 		//this.undo = this.undo.bind(this);
 	}
 
 	penColor = '#000000';
 
-	draw(lastX, lastY, currentX, currentY, penColor) {
+	draw(lastX, lastY, currentX, currentY, penColor, brushSize) {
+		console.log(brushSize);
 		this.ctx.beginPath();
 		this.ctx.moveTo(lastX, lastY);
 		this.ctx.lineTo(currentX, currentY);
+		this.ctx.lineWidth = brushSize;
 		this.ctx.strokeStyle = penColor;
 		this.ctx.stroke();
 	}
@@ -54,21 +57,22 @@ class WhiteBoard extends React.Component {
 			this.lastX = e.touches[0].clientX - this.refs.canvas.offsetLeft;
 			this.lastY = e.touches[0].clientY - this.refs.canvas.offsetTop;
 			this.drawing = true;
-			this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
+			this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor, brushSize: this.brushSize});
 		} else if (res == 'touchmove') {
 			e.preventDefault();
 			if (this.drawing) {
-				this.draw(this.lastX, this.lastY, e.changedTouches[0].clientX - this.refs.canvas.offsetLeft, e.changedTouches[0].clientY - this.refs.canvas.offsetTop, this.penColor);
+				console.log(this.brushSize);
+				this.draw(this.lastX, this.lastY, e.changedTouches[0].clientX - this.refs.canvas.offsetLeft, e.changedTouches[0].clientY - this.refs.canvas.offsetTop, this.penColor, this.brushSize);
 				this.lastX = e.changedTouches[0].clientX - this.refs.canvas.offsetLeft;
 				this.lastY = e.changedTouches[0].clientY - this.refs.canvas.offsetTop;
-				this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
+				this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor, brushSize: this.brushSize});
 			}
 		} else if (res == 'touchend') {
 			e.preventDefault();
 			this.drawing = false;
 			this.board.push(this.points.slice());
 			console.log(this.board);
-			this.socket.emit('draw', {points: this.points, penColor: this.penColor});
+			this.socket.emit('draw', {points: this.points, penColor: this.penColor, brushSize: this.brushSize});
 			this.points = [];
 		} else if (res == 'down') {
 			//e.preventDefault();
@@ -76,20 +80,20 @@ class WhiteBoard extends React.Component {
 			this.lastX = e.clientX - this.refs.canvas.offsetLeft;
 			this.lastY = e.clientY - this.refs.canvas.offsetTop;
 			this.drawing = true;
-			this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
+			this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor, brushSize: this.brushSize});
 		} else if (res == 'up') {
 			//e.preventDefault();
 			this.drawing = false;
 			this.board.push(this.points.slice());
-			this.socket.emit('draw', {points: this.points, penColor: this.penColor});
+			this.socket.emit('draw', {points: this.points, penColor: this.penColor, brushSize: this.brushSize});
 			this.points = [];
 		} else if (res == 'move') {
 			//e.preventDefault();
 			if (this.drawing) {
-				this.draw(this.lastX, this.lastY, e.clientX - this.refs.canvas.offsetLeft, e.clientY - this.refs.canvas.offsetTop, this.penColor);
+				this.draw(this.lastX, this.lastY, e.clientX - this.refs.canvas.offsetLeft, e.clientY - this.refs.canvas.offsetTop, this.penColor, this.brushSize);
 				this.lastX = e.clientX - this.refs.canvas.offsetLeft;
 				this.lastY = e.clientY - this.refs.canvas.offsetTop;
-				this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
+				this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor, brushSize: this.brushSize});
 			}
 		}
 	}
@@ -108,7 +112,7 @@ class WhiteBoard extends React.Component {
 			console.log('Here');
 			console.log(points);
 			for (let i = 1; i < points.length; ++i) {
-				this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y, points[i].penColor);
+				this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y, points[i].penColor, points[i].brushSize);
 			}
 		}
 
@@ -131,14 +135,15 @@ class WhiteBoard extends React.Component {
 
 				for (let points of this.board) {
 					for (let i = 1; i < points.length; ++i) {
-						this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y, points[i].penColor);
+						this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y, points[i].penColor, msg.brushSize);
 					}
 				}
 
 			} else {
 				console.log('Received', msg);
 				for (let i = 1; i < msg.points.length; ++i) {
-					this.draw(msg.points[i-1].x, msg.points[i-1].y, msg.points[i].x, msg.points[i].y, msg.penColor);
+					console.log(msg.brushSize);
+					this.draw(msg.points[i-1].x, msg.points[i-1].y, msg.points[i].x, msg.points[i].y, msg.penColor, msg.brushSize);
 				}
 				this.board.push(msg.points);
 			}
@@ -150,10 +155,15 @@ class WhiteBoard extends React.Component {
 		this.penColor = color;
 	}
 
+	changeBrushSize(size) {
+		console.log(size);
+		this.brushSize = size;
+	}
+
 	render() {
 		return (
 			<div>
-				<Icons onSelectPenColor={(color) => this.changePenColor(color)} onUndo={() => this.undo()} />
+				<Icons onSelectPenColor={(color) => this.changePenColor(color)} onUndo={() => this.undo()} onSelectBrushSize={(size) => this.changeBrushSize(size)}/>
 
 				<Card ref="canvasContainer" elevation={4}>
 					<canvas id="board"
