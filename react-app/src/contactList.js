@@ -4,6 +4,7 @@ import { withStyles } from 'material-ui/styles';
 import List, { ListItem, ListItemSecondaryAction, ListItemText } from 'material-ui/List';
 import Checkbox from 'material-ui/Checkbox';
 import Avatar from 'material-ui/Avatar';
+import Btn from './confirmBtn.js';
 
 const styles = theme => ({
   root: {
@@ -38,21 +39,26 @@ class CheckboxListSecondary extends React.Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.root}>
-        <List>
-          {["Steven", "Cameron", "Man", "Michael"].map(value => (
-            <ListItem key={value} dense button className={classes.listItem}>
-              <Avatar alt="Remy Sharp" src={`/img/${value}.jpg`} />
-              <ListItemText primary={`${value}`} />
-              <ListItemSecondaryAction>
-                <Checkbox
-                  onChange={this.handleToggle(value)}
-                  checked={this.state.checked.indexOf(value) !== -1}
-                />
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))}
-        </List>
+      <div>
+        <div className={classes.root}>
+          <List>
+            {["Steven", "Cameron", "Man", "Michael"].map(value => (
+              <ListItem key={value} dense button className={classes.listItem}>
+                <Avatar alt="Remy Sharp" src={`/img/${value}.jpg`} />
+                <ListItemText primary={`${value}`} />
+                <ListItemSecondaryAction>
+                  <Checkbox
+                    onChange={this.handleToggle(value)}
+                    checked={this.state.checked.indexOf(value) !== -1}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </div>
+        <div>
+          <Btn />
+        </div>
       </div>
     );
   }
