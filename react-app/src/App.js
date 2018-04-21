@@ -1,21 +1,24 @@
 import React, { Component } from 'react';
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import MenuAppBar from './AppBar';
+import ConversationList from './ConversationList';
 import CheckboxListSecondary from './contactList';
+import WhiteBoard from './WhiteBoard';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import './App.css';
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <MenuAppBar />
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <div align="center">
-          <CheckboxListSecondary />
+      <Router>
+        <div className="App">
+          <MenuAppBar />
+
+          <Route exact path="/" component={ConversationList} />
+          <Route path="/contact-list" component={CheckboxListSecondary} />
+          <Route path="/whiteboard" component={WhiteBoard} />
         </div>
-      </div>
+      </Router>
     );
   }
 }
