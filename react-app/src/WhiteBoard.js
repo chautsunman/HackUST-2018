@@ -26,6 +26,9 @@ class WhiteBoard extends React.Component {
 		this.width = 600;
 		this.height = 500;
 		this.points = [];
+		this.board = [];
+
+		//this.undo = this.undo.bind(this);
 	}
 
 	draw(lastX, lastY, currentX, currentY) {
@@ -60,7 +63,8 @@ class WhiteBoard extends React.Component {
 			}
 		} else if (res == 'touchend') {
 			this.drawing = false;
-			console.log(this.points);
+			this.board.push(this.points.slice());
+			console.log(this.board);
 			this.socket.emit('draw', {points: this.points});
 			this.points = [];
 		} else if (res == 'down') {
@@ -78,8 +82,27 @@ class WhiteBoard extends React.Component {
 		}
 	}
 
+	undo() {
+		console.log('Undo');
+		console.log(this.board);
+		this.socket.emit('draw', {undo: true});
+
+		this.board.pop();
+		console.log(this.board);
+
+		this.ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+
+		for (let points of this.board) {
+			console.log('Here');
+			console.log(points);
+			for (let i = 1; i < points.length; ++i) {
+				this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+			}
+		}
+
+	}
+
 	componentWillMount() {
-		//React.initializeTouchEvents(true);
 	}
 
 	componentDidMount() {
@@ -90,9 +113,24 @@ class WhiteBoard extends React.Component {
 		console.log(this.height);
 
 		this.socket.on('draw', (msg) => {
-			console.log('Received');
-			for (let i = 1; i < msg.points.length; ++i) {
-				this.draw(msg.points[i-1].x, msg.points[i-1].y, msg.points[i].x, msg.points[i].y);
+			if (msg.undo) {
+				console.log('Undo');
+				this.board.pop();
+		
+				this.ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+
+				for (let points of this.board) {
+					for (let i = 1; i < points.length; ++i) {
+						this.draw(points[i-1].x, points[i-1].y, points[i].x, points[i].y);
+					}
+				}
+
+			} else {
+				console.log('Received');
+				for (let i = 1; i < msg.points.length; ++i) {
+					this.draw(msg.points[i-1].x, msg.points[i-1].y, msg.points[i].x, msg.points[i].y);
+				}
+				this.board.push(msg.points);
 			}
 		});
 
@@ -116,6 +154,7 @@ class WhiteBoard extends React.Component {
 						onTouchEnd={(e) => this.onTouch('touchend', e)}
 					>
 					</canvas>
+					<button onClick={() => this.undo()}>Undo</button>
 				</Card>
 			</div>
 		);
