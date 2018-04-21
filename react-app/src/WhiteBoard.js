@@ -86,6 +86,7 @@ class WhiteBoard extends React.Component {
 				this.draw(this.lastX, this.lastY, e.clientX - this.refs.canvas.offsetLeft, e.clientY - this.refs.canvas.offsetTop, this.penColor);
 				this.lastX = e.clientX - this.refs.canvas.offsetLeft;
 				this.lastY = e.clientY - this.refs.canvas.offsetTop;
+				this.points.push({x: this.lastX, y: this.lastY, penColor: this.penColor});
 			}
 		}
 	}
@@ -134,7 +135,7 @@ class WhiteBoard extends React.Component {
 				}
 
 			} else {
-				console.log('Received');
+				console.log('Received', msg);
 				for (let i = 1; i < msg.points.length; ++i) {
 					this.draw(msg.points[i-1].x, msg.points[i-1].y, msg.points[i].x, msg.points[i].y, msg.penColor);
 				}
