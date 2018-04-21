@@ -40,7 +40,10 @@ class CheckboxListSecondary extends React.Component {
 
     return (
       <div>
-        <div className={classes.root}>
+        <div>
+          <p>Invite friends to the conversation:</p>
+        </div>
+        <div className={classes.root} style={{marginLeft:"auto",marginRight:"auto"}}>
           <List>
             {["Steven", "Cameron", "Man", "Michael"].map(value => (
               <ListItem key={value} dense button className={classes.listItem}>

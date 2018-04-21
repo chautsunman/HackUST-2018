@@ -14,11 +14,12 @@ class App extends Component {
       <Router>
         <div className="App">
           <MenuAppBar />
-
-          <Route exact path="/" component={ConversationList} />
+          <div className="conversation">
+            <Route exact path="/" component={ConversationList} />
+          </div>
           <Route path="/contact-list" component={CheckboxListSecondary} />
           <Route path="/whiteboard" component={WhiteBoard} />
-		  <Route path="/chat" component={Chat} />
+          <Route path="/chat" component={Chat} />
         </div>
       </Router>
     );
