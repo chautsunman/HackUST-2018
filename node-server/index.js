@@ -8,6 +8,14 @@ app.get('/', (req, res) => res.send('Hello World!'));
 
 io.on('connection', function(socket) {
   console.log('a user connected');
+
+  socket.on('chat', function(msg) {
+    io.emit('chat', msg);
+  });
+
+  socket.on('draw', function() {
+    socket.broadcast.emit('draw');
+  });
 });
 
 server.listen(8080, () => console.log('Example app listening on port 8080!'));

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
+import ChatRoom from './ChatRoom';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 
@@ -28,7 +29,7 @@ class Chat extends React.Component {
 		});
 	}
 
-	componentDidMount() {	
+	componentDidMount() {
 		this.webrtc.on('readyToCall', () => {
 			console.log('Ready');
 			this.webrtc.joinRoom('chatroom');
@@ -39,6 +40,8 @@ class Chat extends React.Component {
 
 		return (
 			<div>
+				<ChatRoom />
+
 				<Paper elevation={4}>
 					<video id="localVideo"></video>
 					<div id="remoteVideos"></div>
