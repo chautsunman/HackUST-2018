@@ -6,14 +6,17 @@ import Toolbar from 'material-ui/Toolbar';
 import Typography from 'material-ui/Typography';
 import IconButton from 'material-ui/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import Home from '@material-ui/icons/Home';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Switch from 'material-ui/Switch';
 import { FormControlLabel, FormGroup } from 'material-ui/Form';
 import Menu, { MenuItem } from 'material-ui/Menu';
+
 import List from 'material-ui/List';
 import Divider from 'material-ui/Divider';
 import Chat from './Chat';
 
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import { withRouter } from 'react-router';
 
 // import { mailFolderListItems, otherMailFolderListItems } from './tileData';
@@ -130,6 +133,12 @@ class MenuAppBar extends React.Component {
                 </Menu>
               </div>
             )}
+            <Link to="/">
+              <IconButton color="default">
+                <Home />
+              </IconButton>
+            </Link>
+
             <IconButton onClick={this.toggleDrawer('right', true)} className={classes.menuButton} color="inherit" aria-label="Menu">
               <MenuIcon />
             </IconButton>
